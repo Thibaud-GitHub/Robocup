@@ -1,0 +1,1 @@
+controller_joint_names: ['', 'joint_fwr', 'joint_fwl', 'joint_bwl', 'joint_bwr', 'joint_puncher', 'joint_dribler', ]
