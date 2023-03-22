@@ -1,0 +1,120 @@
+La première étape consiste à créer un contrôleur pour chaque roue. Vous pouvez utiliser un contrôleur PID ou un contrôleur fuzzy, selon les contraintes et les exigences du système. Une fois les contrôleurs créés, vous devez les connecter à votre robot via un noeud ROS. Vous devez créer un noeud qui s'abonne aux topics de commande et qui est capable de communiquer avec les contrôleurs. Ce noeud devra également publier des topics qui contiennent des informations sur l'état des contrôleurs et les informations de retour. Enfin, vous devrez créer un noeud qui peut recevoir des commandes de direction et qui est capable de les convertir en commandes de vitesse pour chaque roue.
+Voilà une partie de mon URDf généré pour controller la roue avant gauche de mon robot :
+<link
+    name="Wheel_Front_Left">
+    <inertial>
+      <origin
+        xyz="-0.0131020440662054 5.27333704342103E-07 -1.26179584825949E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.0200704541706871" />
+      <inertia
+        ixx="0."
+        ixy="0"
+        ixz="0"
+        iyy="0"
+        iyz="0"
+        izz="0" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://omni_robot/meshes/Wheel_Front_Left.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.752941176470588 0.752941176470588 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://omni_robot/meshes/Wheel_Front_Left.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="joint_wfl"
+    type="continuous">
+    <origin
+      xyz="-0.0761780259008162 0.0760716105192465 0.0149999999999998"
+      rpy="0 0 2.35619449019235" />
+    <parent
+      link="base_link" />
+    <child
+      link="Wheel_Front_Left" />
+    <axis
+      xyz="1 0 0" />
+  </joint>
+Crée moi un controlleur PID pour cette roue
+
+Le code suivant crée un contrôleur PID pour la roue avant gauche de votre robot. Il prend en entrée une erreur et produit une action en sortie qui peut être appliquée à la roue.
+
+class PID_Controller:
+    def __init__(self):
+        self.Kp = 0.1
+        self.Ki = 0.01
+        self.Kd = 0.01
+        self.integral = 0
+        self.previous_error = 0
+
+    def run(self, error):
+        # Calculer la partie proportionnelle
+        P = self.Kp * error
+        
+        # Calculer la partie intégrale
+        self.integral += error
+        I = self.Ki * self.integral
+        
+        # Calculer la partie dérivée
+        D = self.Kd * (error - self.previous_error)
+        self.previous_error = error
+        
+        # Calculer la sortie
+        output = P + I + D
+        
+        return output
+Ecrit moi un noeud ros qui permet de connecter ce controlleur à mon robot 
+
+Le code suivant crée un noeud ROS qui se connecte à votre robot et à votre contrôleur PID pour la roue avant gauche. Il s'abonne aux topics de commande et publie des topics avec des informations sur l'état du contrôleur et les informations de retour.
+
+import rospy
+from std_msgs.msg import Float64
+from robot_msgs.msg import WheelStatus
+
+class WheelControllerNode:
+    def __init__(self):
+        self.controller = PID_Controller()
+        rospy.Subscriber("/command/wheel_front_left", Float64, self.command_cb)
+        self.wheel_status_pub = rospy.Publisher("/status/wheel_front_left", WheelStatus, queue_size=10)
+
+    def command_cb(self, msg):
+        # Traiter la commande et appliquer le contrôleur PID
+        output = self.controller.run(msg.data)
+
+        # Publier le statut
+        status_msg = WheelStatus()
+        status_msg.position = msg.data
+        status_msg.velocity = output
+        self.wheel_status_pub.publish(status_msg)
+
+if __name__ == "__main__":
+    rospy.init_node("wheel_controller")
+    wcn = WheelControllerNode()
+    rospy.spin()
+Que dois-je faire ensuite pour que mon la roue avant gauche de mon robot se déplace jusqu'a la position x=3, y=4 et z=0 ?
+
+Pour que la roue avant gauche de votre robot se déplace jusqu'à la position x=3, y=4 et z=0, vous devez publier une commande de position à votre noeud de contrôleur. Vous pouvez le faire en publiant un message de type Float64 sur le topic /command/wheel_front_left avec une valeur correspondant aux coordonnées souhaitées (3, 4, 0). Le noeud de contrôleur récupérera cette commande et appliquera le contrôleur PID pour atteindre la position souhaitée.
+Je n'ai pas bien compris ou je dois placer le code du PID.
+
+Le code du contrôleur PID doit être placé dans un fichier séparé et importé dans votre noeud ROS. Le code du contrôleur devrait être placé dans un fichier appelé pid_controller.py et le noeud ROS devrait importer ce fichier et instancier le contrôleur PID.
+from robot_msgs.msg import WheelStatus robot_msgs.msg ne peut pas etre importer, comment régler le problème ?
+
+Le problème pourrait être dû à un manque de paquets ROS. Assurez-vous que le paquet robot_msgs est correctement installé sur votre système et que vous l'avez bien ajouté à votre fichier package.xml. Vous pouvez également vérifier que le chemin est correctement défini dans votre fichier CMakeLists.txt.
