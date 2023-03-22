@@ -1,0 +1,9 @@
+controller_list:
+  - name: wheel_controller
+    type: joint_effort_controller/JointEffortController
+    joint: [wheel_1_joint, wheel_2_joint, wheel_3_joint, wheel_4_joint]
+    pid:
+      p: 10.0
+      i: 0.1
+      d: 0.0
+      i_clamp: 10.0
