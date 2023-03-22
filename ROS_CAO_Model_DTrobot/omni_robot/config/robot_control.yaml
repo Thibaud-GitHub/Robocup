@@ -1,0 +1,10 @@
+controller_list:
+  - name: wheel_controller
+    type: joint_effort_controller/JointEffortController
+    joint: [joint_wfr, joint_wfl, joint_wbl, joint_wbr]
+    pid:
+      p: 10.0
+      i: 0.1
+      d: 0.0
+      i_clamp: 10.0
+    publish_rate: 50 # Nom du topic par défaut : /wheel_controller/command
