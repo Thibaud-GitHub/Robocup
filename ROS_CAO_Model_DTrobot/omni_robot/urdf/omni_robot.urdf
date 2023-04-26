@@ -368,35 +368,71 @@
       velocity="30" />
   </joint>
 
-  <!-- Controllers -->
   <gazebo>
-    <plugin name="wheel_front_right_plugin" filename="libgazebo_ros_effort.so">
-      <ros>
-        <namespace>/omni_robot</namespace>
-        <remapping>cmd_vel:=wheel_front_right_controller/cmd_vel</remapping>
-      </ros>
-      <joint>joint_wfr</joint>
-    </plugin>
-    <plugin name="wheel_front_left_plugin" filename="libgazebo_ros_effort.so">
-      <ros>
-        <namespace>/omni_robot</namespace>
-        <remapping>cmd_vel:=wheel_front_left_controller/cmd_vel</remapping>
-      </ros>
-      <joint>joint_wfl</joint>
-    </plugin>
-    <plugin name="wheel_back_left_plugin" filename="libgazebo_ros_effort.so">
-      <ros>
-        <namespace>/omni_robot</namespace>
-        <remapping>cmd_vel:=wheel_back_left_controller/cmd_vel</remapping>
-      </ros>
-      <joint>joint_wbl</joint>
-    </plugin>
-    <plugin name="wheel_back_right_plugin" filename="libgazebo_ros_effort.so">
-      <ros>
-        <namespace>/omni_robot</namespace>
-        <remapping>cmd_vel:=wheel_back_right_controller/cmd_vel</remapping>
-      </ros>
-      <joint>joint_wbr</joint>
+    <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+      <robotNamespace>omni_robot</robotNamespace>
     </plugin>
   </gazebo>
+
+
+  <transmission name="wfl_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="wfl_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="joint_wfl">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+  
+  <transmission name="wfr_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="wfr_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="joint_wfr">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+  
+  <transmission name="wbl_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="wbl_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="joint_wbl">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+  <transmission name="wbr_trans" type="SimpleTransmission">
+    <type>transmission_interface/SimpleTransmission</type>
+    <actuator name="wbr_motor">
+      <mechanicalReduction>1</mechanicalReduction>
+    </actuator>
+    <joint name="joint_wbr">
+      <hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+    </joint>
+  </transmission>
+
+    <transmission name="dribler_trans" type="SimpleTransmission">
+	<type>transmission_interface/SimpleTransmission</type>
+	<actuator name="dribler_motor">
+		<mechanicalReduction>1</mechanicalReduction>
+	</actuator>
+	<joint name="joint_dribler">
+		<hardwareInterface>hardware_interface/VelocityJointInterface</hardwareInterface>
+	</joint>
+  </transmission>
+
+     <transmission name="puncher_trans" type="SimpleTransmission">
+	<type>transmission_interface/SimpleTransmission</type>
+	<actuator name="puncher_solenoid">
+		<mechanicalReduction>1</mechanicalReduction>
+	</actuator>
+	<joint name="joint_puncher">
+		<hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+	</joint>
+  </transmission>
+
 </robot>
