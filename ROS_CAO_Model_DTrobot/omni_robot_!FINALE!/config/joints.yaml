@@ -1,0 +1,63 @@
+omni_robot:
+
+    joint_state_controller:
+        type: joint_state_controller/JointStateController
+        publish_rate: 100
+
+    wfl_joint_velocity_controller:
+        type: velocity_controllers/JointVelocityController
+        joint: joint_wfl
+        pid: {p: 0.0, i: 0.0, d: 0.0}
+
+    wfr_joint_velocity_controller:
+        type: velocity_controllers/JointVelocityController
+        joint: joint_wfr
+        pid: {p: 0.0, i: 0.0, d: 0.0}
+
+    wbl_joint_velocity_controller:
+        type: velocity_controllers/JointVelocityController
+        joint: joint_wbl
+        pid: {p: 0.0, i: 0.0, d: 0.0}
+
+    wbr_joint_velocity_controller:
+        type: velocity_controllers/JointVelocityController
+        joint: joint_wbr
+        pid: {p: 0.0, i: 0.0, d: 0.0}
+    
+    dribler_velocity_controller:
+        type: velocity_controllers/JointVelocityController
+        joint: joint_dribler
+        pid: {p: 0.0, i: 0.0, d: 0.0}
+    
+    puncher_position_controller:
+        type: effort_controllers/JointPositionController
+        joint: joint_puncher
+        pid: {p: 0.0, i: 0.01, d: 0.00}
+
+
+/omni_robot/gazebo_ros_control:
+    pid_gains:
+        joint_wfl:
+            p: 0.001
+            i: 0.00
+            d: 0.00
+        joint_wfr:
+            p: 0.001
+            i: 0.00
+            d: 0.00
+        joint_wbl:
+            p: 0.001
+            i: 0.00
+            d: 0.00
+        joint_wbr:
+            p: 0.001
+            i: 0.00
+            d: 0.00
+        joint_dribler:
+            p: 0.001
+            i: 0.00
+            d: 0.00
+        joint_puncher:
+            p: 0.0
+            i: 0.01
+            d: 0.00
