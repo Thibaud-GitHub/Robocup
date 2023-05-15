@@ -1,0 +1,38 @@
+<launch>
+
+  <!-- Start Gazebo with the empty world -->
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find omni_robot)/worlds/robocup.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+  <!-- Load URDF file and spawn robot -->
+  <param name="robot_description" textfile="$(find omni_robot)/urdf/omni_robot.urdf"/>
+  
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" respawn="false" output="screen" args="-urdf -model omni_robot -param robot_description -x 2 -y 2 -z 0 -R -1.5708" />
+
+  <!-- Load joint controller configurations from YAML file to parameter server -->
+  <rosparam file="$(find omni_robot)/config/joints.yaml" command="load"/>
+
+  <!-- load the controllers -->
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
+    output="screen" ns="/omni_robot" args="
+         joint_state_controller
+     wfl_joint_velocity_controller
+     wfr_joint_velocity_controller
+     wbl_joint_velocity_controller
+     wbr_joint_velocity_controller
+     dribler_velocity_controller
+     puncher_position_controller
+     "/>
+    <!-- convert joint states to TF transforms for rviz, etc -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"
+    respawn="false" output="screen">
+    <remap from="/joint_states" to="/omni_robot/joint_states" />
+  </node>
+
+</launch>
